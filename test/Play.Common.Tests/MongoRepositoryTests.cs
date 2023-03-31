@@ -4,12 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Moq;
 using Play.Common;
-using Play.Common.MongoDB;
 using Xunit;
 
 public class MongoRepositoryTests
 {
-    private readonly Mock<MongoRepository<TestEntity>> _mockRepository = new Mock<MongoRepository<TestEntity>>();
+    private readonly Mock<IRepository<TestEntity>> _mockRepository = new Mock<IRepository<TestEntity>>();
 
     [Fact]
     public async Task TestGetAllAsync()
