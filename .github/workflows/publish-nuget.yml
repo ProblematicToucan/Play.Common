@@ -6,9 +6,16 @@ name: .NET
 on:
   push:
     branches: [ "master" ]
+    tags: -'v*'
   pull_request:
     branches: [ "master" ]
+    tags: -'v*'
   workflow_dispatch:
+    inputs:
+      tags:
+        description: 'Comma-separated list of tags'
+        required: false
+        default: 'latest'
 
 jobs:
   build:
@@ -46,6 +53,10 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '5.0.x'
+        
+    - name: Git Version
+      id: version
+      uses: codacy/git-version@2.4.0
              
     - name: Build
       run: dotnet build ./src/Play.Common/Play.Common.csproj
@@ -56,5 +67,5 @@ jobs:
     - name: Publish the package to GPR
       run: |
           dotnet nuget add source --username USERNAME --password ${{ secrets.GITHUB_TOKEN  }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/ProblematicToucan/index.json"
-          dotnet nuget push ./src/Play.Common/bin/Release/*.nupkg  --api-key ${{secrets.GPR_GITHUB_TOKEN}} --source "github"
+          dotnet nuget push ./src/Play.Common/bin/Release/*.nupkg -p:PackageVersion=${{ steps.version.outputs.version }}  --api-key ${{secrets.GPR_GITHUB_TOKEN}} --source "github"
       
